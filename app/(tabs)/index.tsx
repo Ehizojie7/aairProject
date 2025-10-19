@@ -1,13 +1,13 @@
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { useTasks } from '@/hooks/useTasks';
+import { useThemePreference } from '@/hooks/useThemePreference';
+import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { Alert, FlatList, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useTasks } from '@/hooks/useTasks';
-import { useThemePreference } from '@/hooks/useThemePreference';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 
 type Filter = 'all' | 'active' | 'completed';
 type SortBy = 'created' | 'dueDate' | 'title';
@@ -215,8 +215,8 @@ export default function TasksListScreen() {
           )}
         />
       </ThemedView>
-      <Pressable onPress={() => router.push('/(tabs)/add')} style={styles.fab}>
-        <IconSymbol size={28} name="plus" color="#fff" />
+      <Pressable onPress={() => router.push('/(tabs)/voice')} style={styles.fab}>
+        <IconSymbol size={28} name="mic" color="#fff" />
       </Pressable>
     </SafeAreaView>
   );

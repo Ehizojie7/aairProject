@@ -6,6 +6,7 @@ A modern, cross-platform task management application built with React Native and
 
 ### Core Functionality
 - ✅ **Create Tasks**: Add tasks with titles, descriptions, and optional due dates
+- 🎤 **Voice-to-Task**: Speak naturally to add multiple tasks at once with intelligent parsing
 - ✅ **Task Management**: Mark tasks as complete/incomplete, delete individual tasks
 - 🔍 **Search & Filter**: Search tasks by title/description, filter by status (all/active/completed)
 - 📊 **Sorting**: Sort tasks by creation date, due date, or alphabetically
@@ -47,7 +48,7 @@ Before running this project, make sure you have the following installed:
    cd aairProject
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies:** 
    ```bash
    npm install
    ```
@@ -112,11 +113,20 @@ aairProject/
 ## 🎯 Usage
 
 ### Creating Tasks
+
+#### Traditional Method
 1. Navigate to the **Add** tab
 2. Enter a task title (required)
 3. Optionally add a description
 4. Set a due date if needed
 5. Tap **Save Task**
+
+#### Voice-to-Task Method
+1. Navigate to the **Voice** tab or tap the microphone FAB
+2. Tap the microphone button to start recording
+3. Speak naturally, e.g., "Buy groceries and call mom"
+4. The app will automatically parse and add multiple tasks
+5. Review the results and add more if needed
 
 ### Managing Tasks
 - **Complete/Uncomplete**: Tap the checkbox next to any task
@@ -151,6 +161,102 @@ aairProject/
 - **TypeScript** for type safety
 - **Consistent** file structure and naming
 - **React hooks** for state management
+
+## 🎤 Voice-to-Task Feature
+
+### API Choice: Hybrid Speech Recognition
+
+The Voice-to-Task feature uses a **hybrid approach** for speech-to-text conversion, automatically selecting the best API for each platform:
+
+#### Web Platform: Web Speech API
+- **Native Browser Support**: Available in modern browsers without additional dependencies
+- **Real-time Processing**: Provides both interim and final results during speech recognition
+- **Language Support**: Supports multiple languages and dialects
+- **Cost-Effective**: No external API costs or rate limits
+- **Privacy-Focused**: Speech processing happens locally in the browser
+
+#### Mobile Platform: Smart Text Input
+- **Intelligent Text Parsing**: Uses the same natural language processing as voice input
+- **User-Friendly Interface**: Clean text input dialog with helpful examples
+- **Same Functionality**: Identical task splitting and parsing capabilities
+- **Seamless Experience**: Same results as voice input, just through typing
+
+#### Advantages:
+- **Universal Compatibility**: Works on web, iOS, and Android
+- **Platform Optimization**: Uses the best speech recognition engine for each platform
+- **Seamless Experience**: Same interface and functionality across all platforms
+- **No External Dependencies**: No third-party API keys or subscriptions required
+
+#### Current Limitations:
+- **Network Dependency**: Requires internet connection for speech processing
+- **Permission Requirements**: Mobile devices require microphone permissions
+
+#### Future Enhancements:
+- Offline speech recognition capabilities
+- Custom wake word detection
+- Multi-language support with automatic detection
+
+### Natural Language Parsing Approach
+
+The app implements an intelligent natural language parser (`utils/taskParser.ts`) that can split spoken sentences into multiple discrete tasks.
+
+#### Parsing Strategy:
+
+1. **Separator Detection**: Identifies common conjunctions and separators:
+   - Coordinating conjunctions: "and", "then", "also", "plus"
+   - Punctuation-based: commas, semicolons
+   - Sequential indicators: "after that", "next", "afterwards"
+
+2. **Context Analysis**: Determines whether text represents:
+   - Multiple discrete tasks: "Buy groceries and call mom"
+   - Single complex task: "Buy flowers for mom's birthday"
+   - Sequential steps: "Go to store then buy milk"
+
+3. **Action Verb Recognition**: Identifies task-starting action verbs:
+   - Communication: call, email, text, message, send
+   - Purchasing: buy, order, purchase, get, pick up
+   - Scheduling: schedule, book, reserve, meet, attend
+   - Productivity: write, read, finish, complete, review
+
+4. **Confidence Scoring**: Each parsed task receives a confidence score (0-1) based on:
+   - Separator strength and context
+   - Presence of action verbs
+   - Task structure validity
+   - Overall parsing method reliability
+
+#### Example Parsing Results:
+
+```typescript
+// Input: "Buy groceries and call mom"
+// Output: 
+[
+  { title: "Buy groceries", confidence: 0.9 },
+  { title: "Call mom", confidence: 0.9 }
+]
+
+// Input: "Send email to John, schedule meeting with Sarah, and finish the report"
+// Output:
+[
+  { title: "Send email to John", confidence: 0.8 },
+  { title: "Schedule meeting with Sarah", confidence: 0.8 },
+  { title: "Finish the report", confidence: 0.8 }
+]
+
+// Input: "Buy flowers for mom's birthday"
+// Output: (treated as single task)
+[
+  { title: "Buy flowers for mom's birthday", confidence: 0.9 }
+]
+```
+
+#### Parsing Methods:
+- `split-by-and`: Tasks separated by "and"
+- `split-by-punctuation`: Tasks separated by commas/semicolons
+- `split-by-then`: Sequential tasks with "then"
+- `single-complex-task`: Complex single task detected
+- `single-task-fallback`: Default single task treatment
+
+This intelligent parsing ensures that users can speak naturally while the app correctly interprets their intent, whether they're dictating one complex task or multiple simple ones.
 
 
 
